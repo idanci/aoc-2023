@@ -16,7 +16,7 @@
       foreach($chars as $char){
         $int_char = intval($char);
 
-        $is_letter = $int_char == 0 && $char != '0';
+        $is_letter = $int_char == 0;
 
         if($is_letter) {
           continue;

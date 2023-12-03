@@ -124,7 +124,7 @@
     if ($numberStr !== '') {
       $x2 = $length - 1;
       $part = new Part(intval($numberStr), $row, $x1, $x2);
-      array_push($parts, $part);
+      array_push($parts[$row], $part);
     }
   }
 ?>

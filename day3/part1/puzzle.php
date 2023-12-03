@@ -20,20 +20,9 @@
     $sum = 0;
 
     foreach($lines as $row => $line){
-      preg_match_all('/[0-9]+/', $line, $number_matches);
+      populate_numbers_from_line($row, $line, $numbers);
 
-      foreach($number_matches[0] as $num){
-        $x1 = strpos($line, strval($num));
-        $x2 = $x1 + strlen($num) - 1;
-
-        $number = new Number($num, $row, $x1, $x2);
-
-        array_push($numbers, $number);
-      }
-
-      $chars = str_split($line);
-
-      foreach($chars as $column => $char){
+      foreach(str_split($line) as $column => $char){
         if($char === '.' || is_numeric($char)){
           continue;
         }
@@ -49,6 +38,32 @@
     }
 
     echo $input . ": " . $sum . "\n";
+  }
+
+  function populate_numbers_from_line($row, $line, &$numbers) {
+    $numberStr = '';
+    $x1 = 0;
+    $length = strlen($line);
+
+    for ($i = 0; $i < $length; $i++) {
+      if (is_numeric($line[$i])) {
+        if ($numberStr === '') {
+          $x1 = $i; // start of a new number
+        }
+        $numberStr .= $line[$i];
+      } elseif ($numberStr !== '') {
+        $x2 = $i - 1;
+        $number = new Number(intval($numberStr), $row, $x1, $x2);
+        array_push($numbers, $number);
+        $numberStr = ''; // reset for the next number
+      }
+    }
+
+    if ($numberStr !== '') {
+      $x2 = $length - 1;
+      $number = new Number(intval($numberStr), $row, $x1, $x2);
+      array_push($numbers, $number);
+    }
   }
 
   function is_part($number, $symbols) {
@@ -73,8 +88,8 @@
 
     // same row
     if(array_key_exists($row, $symbols)) {
-      foreach(range($left_bound, $right_bound) as $col) {
-        if (in_array($col, $symbols[$row])) {
+      foreach($symbols[$row] as $col) {
+        if (in_array($col, range($left_bound, $right_bound))) {
           return true;
         }
       }

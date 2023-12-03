@@ -11,7 +11,7 @@
     }
   }
 
-  $inputs = array("example.txt");
+  $inputs = array("example.txt", "input.txt");
 
   foreach($inputs as $input) {
     $myfile = fopen($input, "r") or die("Unable to open file!");
@@ -43,10 +43,56 @@
       }
     }
 
-    // print_r($numbers);
+    foreach($numbers as $num){
+      if(is_part($num, $symbols)){
+        $sum += $num->value;
+      }
+    }
 
     echo $input . ": " . $sum . "\n";
 
     fclose($myfile);
+  }
+
+  function is_part($number, $symbols) {
+    // 1. If row above has a symbol in ($number->x1 - 1 .. $number->x2 + 1) return true
+    // 2. If row below has a symbol in ($number->x1 - 1 .. $number->x2 + 1) return true
+    // 3. If same row has a symbol in ($number->x1 - 1 .. $number->x2 + 1) return true
+
+    $total_rows = count($symbols);
+    $row = $number->row;
+
+    $left_bound = $number->x1 === 0 ? $number->x1 : $number->x1 - 1;
+    $right_bound = $number->x2 === $total_rows - 1 ? $number->x2 - 1 : $number->x2 + 1;
+
+    // row above
+    if(array_key_exists($row - 1, $symbols)) {
+      foreach($symbols[$row - 1] as $col) {
+        if (in_array($col, range($left_bound, $right_bound))) {
+          return true;
+        }
+      }
+    }
+
+    // same row
+    if(array_key_exists($row, $symbols)) {
+      if(array_key_exists($left_bound, $symbols[$row])){
+        return true;
+      }
+      if(array_key_exists($right_bound, $symbols[$row])){
+        return true;
+      }
+    }
+
+    // row below
+    if(array_key_exists($row + 1, $symbols)) {
+      foreach($symbols[$row + 1] as $col) {
+        if (in_array($col, range($left_bound, $right_bound))) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 ?>

@@ -3,7 +3,7 @@
     public $value;
     public $x1, $x2, $row;
 
-    function __construct($value,  $row, $x1, $x2) {
+    function __construct($value, $row, $x1, $x2) {
       $this->value = $value;
       $this->row = $row;
       $this->x1 = $x1;
@@ -14,7 +14,6 @@
   $inputs = array("example.txt", "input.txt");
 
   foreach($inputs as $input) {
-    $myfile = fopen($input, "r") or die("Unable to open file!");
     $lines = file($input, FILE_SKIP_EMPTY_LINES|FILE_IGNORE_NEW_LINES);
     $numbers = array();
     $symbols = array_fill(0, count($lines), array());
@@ -50,8 +49,6 @@
     }
 
     echo $input . ": " . $sum . "\n";
-
-    fclose($myfile);
   }
 
   function is_part($number, $symbols) {
@@ -63,7 +60,7 @@
     $row = $number->row;
 
     $left_bound = $number->x1 === 0 ? $number->x1 : $number->x1 - 1;
-    $right_bound = $number->x2 === $total_rows - 1 ? $number->x2 - 1 : $number->x2 + 1;
+    $right_bound = $number->x2 === $total_rows - 1 ? $number->x2 : $number->x2 + 1;
 
     // row above
     if(array_key_exists($row - 1, $symbols)) {
@@ -76,11 +73,10 @@
 
     // same row
     if(array_key_exists($row, $symbols)) {
-      if(array_key_exists($left_bound, $symbols[$row])){
-        return true;
-      }
-      if(array_key_exists($right_bound, $symbols[$row])){
-        return true;
+      foreach(range($left_bound, $right_bound) as $col) {
+        if (in_array($col, $symbols[$row])) {
+          return true;
+        }
       }
     }
 

@@ -32,7 +32,7 @@
     }
 
     foreach($numbers as $num){
-      if(is_part($num, $symbols)){
+      if(adjacent_to_symbol($num, $symbols)){
         $sum += $num->value;
       }
     }
@@ -66,7 +66,7 @@
     }
   }
 
-  function is_part($number, $symbols) {
+  function adjacent_to_symbol($number, $symbols) {
     // 1. If row above has a symbol in ($number->x1 - 1 .. $number->x2 + 1) return true
     // 2. If row below has a symbol in ($number->x1 - 1 .. $number->x2 + 1) return true
     // 3. If same row has a symbol in ($number->x1 - 1 .. $number->x2 + 1) return true

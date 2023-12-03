@@ -13,52 +13,29 @@
 
   class Gear {
     public $row, $column;
-    private $adjacent_columns;
+    private $adjacent_columns, $adjacent_rows;
 
     function __construct($row, $column) {
       $this->row = $row;
       $this->column = $column;
 
       $this->adjacent_columns = array($this->column - 1, $this->column, $this->column + 1);
+      $this->adjacent_rows = array($this->row - 1, $this->row, $this->row + 1);
     }
 
     function gear_ratio($parts) {
       $adjacent_parts = array();
 
-      if(array_key_exists($this->row - 1, $parts)) {
-        foreach($parts[$this->row - 1] as $part) {
-          foreach($this->adjacent_columns as $col) {
-            if (in_array($col, range($part->x1, $part->x2))) {
-              if(in_array($part, $adjacent_parts)){
-                continue;
+      foreach($this->adjacent_rows as $row) {
+        if(array_key_exists($row, $parts)) {
+          foreach($parts[$row] as $part) {
+            foreach($this->adjacent_columns as $col) {
+              if (in_array($col, range($part->x1, $part->x2))) {
+                if(in_array($part, $adjacent_parts)){
+                  continue;
+                }
+                array_push($adjacent_parts, $part);
               }
-              array_push($adjacent_parts, $part);
-            }
-          }
-        }
-      }
-
-      if(array_key_exists($this->row, $parts)) {
-        foreach($parts[$this->row] as $part) {
-          foreach($this->adjacent_columns as $col) {
-            if (in_array($col, range($part->x1, $part->x2))) {
-              if(in_array($part, $adjacent_parts)){
-                continue;
-              }
-              array_push($adjacent_parts, $part);
-            }
-          }
-        }
-      }
-
-      if(array_key_exists($this->row + 1, $parts)) {
-        foreach($parts[$this->row + 1] as $part) {
-          foreach($this->adjacent_columns as $col) {
-            if (in_array($col, range($part->x1, $part->x2))) {
-              if(in_array($part, $adjacent_parts)){
-                continue;
-              }
-              array_push($adjacent_parts, $part);
             }
           }
         }

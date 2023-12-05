@@ -1,7 +1,7 @@
 <?php
-  $inputs = array("example.txt");
+  // $inputs = array("example.txt");
   // $inputs = array("input.txt");
-  // $inputs = array("example.txt", "input.txt");
+  $inputs = array("example.txt", "input.txt");
 
   foreach($inputs as $input) {
     $lines = file($input, FILE_SKIP_EMPTY_LINES|FILE_IGNORE_NEW_LINES);
@@ -13,18 +13,6 @@
     foreach($matches[0] as $match) {
       $split = explode(' ', $match);
       $seeds[$split[0]] = $split[1];
-      //   (
-      //     [929142010] => 467769747
-      //     [2497466808] => 210166838
-      //     [3768123711] => 33216796
-      //     [1609270159] => 86969850
-      //     [199555506] => 378609832
-      //     [1840685500] => 314009711
-      //     [1740069852] => 36868255
-      //     [2161129344] => 170490105
-      //     [2869967743] => 265455365
-      //     [3984276455] => 31190888
-      //   )
     }
 
     $current_map = null;
@@ -58,29 +46,51 @@
 
     $target_locations = array();
 
-    // foreach($seeds as $initial_location) {
-    //   $current_location = $initial_location;
-
-    //   foreach($maps as $map => $rows) {
-    //     foreach($rows as $row) {
-    //       $source_range_start = $row['source'];
-    //       $source_range_end = $row['source'] + $row['range'] - 1;
-
-    //       if($current_location >= $source_range_start && $current_location <= $source_range_end) {
-    //         // Calculate the offset of current_location within the source range
-    //         $offset = $current_location - $source_range_start;
-    //         // Add the offset to the start of the destination range
-    //         $current_location = $row['dest'] + $offset;
-    //         break;
-    //       }
-    //     }
-    //   }
-
-    //   $target_locations[$initial_location] = $current_location;
-    // }
+    foreach($seeds as $initial_location => $range) {
+      $shortest = find_shortest_path($initial_location, $initial_location + $range, $maps);
+      $target_locations[$initial_location] = $shortest;
+    }
 
     // print_r($target_locations);
+    // return;
     $result = min(array_values($target_locations));
     echo $input . ": " . $result . "\n";
+  }
+
+  function find_shortest_path($left, $right, &$maps) {
+    $min_location = PHP_INT_MAX;
+
+    while ($left <= $right) {
+      $mid = $left + floor(($right - $left) / 2);
+      $location = get_target_location($mid, $maps);
+      $min_location = min($min_location, $location);
+
+      if ($location < $mid) {
+        $right = $mid - 1;
+      } else {
+        $left = $mid + 1;
+      }
+    }
+
+    return $min_location;
+  }
+
+  function get_target_location($seed, &$maps) {
+    $current_location = $seed;
+
+    foreach($maps as $map => $rows) {
+      foreach($rows as $row) {
+        $source_range_start = $row['source'];
+        $source_range_end = $row['source'] + $row['range'] - 1;
+
+        if($current_location >= $source_range_start && $current_location <= $source_range_end) {
+          $offset = $current_location - $source_range_start;
+          $current_location = $row['dest'] + $offset;
+          break;
+        }
+      }
+    }
+
+    return $current_location;
   }
 ?>

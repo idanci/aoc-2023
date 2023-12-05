@@ -7,8 +7,6 @@
     preg_match_all('/\d+/', $lines[0], $matches);
     $seeds = $matches[0];
 
-    $current_map = null;
-
     $maps = array(
       'seed-to-soil map:' => array(),
       'soil-to-fertilizer map:' => array(),
@@ -18,6 +16,21 @@
       'temperature-to-humidity map:' => array(),
       'humidity-to-location map:' => array()
     );
+
+    parse_maps($lines, $maps);
+
+    $target_locations = array();
+
+    foreach($seeds as $initial_location) {
+      $target_locations[$initial_location] = get_target_location($initial_location, $maps);
+    }
+
+    $result = min(array_values($target_locations));
+    echo $input . ": " . $result . "\n";
+  }
+
+  function parse_maps($lines, &$maps) {
+    $current_map = null;
 
     foreach($lines as $line){
       if(str_contains($line, 'map')) {
@@ -35,15 +48,6 @@
 
       array_push($maps[$current_map], $row);
     }
-
-    $target_locations = array();
-
-    foreach($seeds as $initial_location) {
-      $target_locations[$initial_location] = get_target_location($initial_location, $maps);
-    }
-
-    $result = min(array_values($target_locations));
-    echo $input . ": " . $result . "\n";
   }
 
   function get_target_location($seed, &$maps) {

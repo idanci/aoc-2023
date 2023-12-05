@@ -39,27 +39,29 @@
     $target_locations = array();
 
     foreach($seeds as $initial_location) {
-      $current_location = $initial_location;
-
-      foreach($maps as $map => $rows) {
-        foreach($rows as $row) {
-          $source_range_start = $row['source'];
-          $source_range_end = $row['source'] + $row['range'] - 1;
-
-          if($current_location >= $source_range_start && $current_location <= $source_range_end) {
-            // Calculate the offset of current_location within the source range
-            $offset = $current_location - $source_range_start;
-            // Add the offset to the start of the destination range
-            $current_location = $row['dest'] + $offset;
-            break;
-          }
-        }
-      }
-
-      $target_locations[$initial_location] = $current_location;
+      $target_locations[$initial_location] = get_target_location($initial_location, $maps);
     }
 
     $result = min(array_values($target_locations));
     echo $input . ": " . $result . "\n";
+  }
+
+  function get_target_location($seed, &$maps) {
+    $current_location = $seed;
+
+    foreach($maps as $map => $rows) {
+      foreach($rows as $row) {
+        $source_range_start = $row['source'];
+        $source_range_end = $row['source'] + $row['range'] - 1;
+
+        if($current_location >= $source_range_start && $current_location <= $source_range_end) {
+          $offset = $current_location - $source_range_start;
+          $current_location = $row['dest'] + $offset;
+          break;
+        }
+      }
+    }
+
+    return $current_location;
   }
 ?>

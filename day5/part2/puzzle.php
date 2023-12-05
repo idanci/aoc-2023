@@ -27,6 +27,24 @@
       'humidity-to-location map:' => array()
     );
 
+    parse_maps($lines, $maps);
+
+    $target_locations = array();
+
+    foreach($seeds as $initial_location => $range) {
+      $shortest = find_shortest_path($initial_location, $initial_location + $range, $maps);
+      $target_locations[$initial_location] = $shortest;
+    }
+
+    // print_r($target_locations);
+    // return;
+    $result = min(array_values($target_locations));
+    echo $input . ": " . $result . "\n";
+  }
+
+  function parse_maps($lines, &$maps) {
+    $current_map = null;
+
     foreach($lines as $line){
       if(str_contains($line, 'map')) {
         $current_map = $line;
@@ -43,18 +61,6 @@
 
       array_push($maps[$current_map], $row);
     }
-
-    $target_locations = array();
-
-    foreach($seeds as $initial_location => $range) {
-      $shortest = find_shortest_path($initial_location, $initial_location + $range, $maps);
-      $target_locations[$initial_location] = $shortest;
-    }
-
-    // print_r($target_locations);
-    // return;
-    $result = min(array_values($target_locations));
-    echo $input . ": " . $result . "\n";
   }
 
   function find_shortest_path($left, $right, &$maps) {

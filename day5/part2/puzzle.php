@@ -29,16 +29,16 @@
 
     parse_maps($lines, $maps);
 
-    $target_locations = array();
+    $result = INF;
 
     foreach($seeds as $initial_location => $range) {
-      $shortest = find_shortest_path($initial_location, $initial_location + $range, $maps);
-      $target_locations[$initial_location] = $shortest;
+      for($i = $initial_location; $i <= $initial_location + $range; $i++) {
+        $location = get_target_location($i, $maps);
+        $result = min($result, $location);
+      }
     }
 
-    // print_r($target_locations);
-    // return;
-    $result = min(array_values($target_locations));
+    // 20191102
     echo $input . ": " . $result . "\n";
   }
 
@@ -61,24 +61,6 @@
 
       array_push($maps[$current_map], $row);
     }
-  }
-
-  function find_shortest_path($left, $right, &$maps) {
-    $min_location = PHP_INT_MAX;
-
-    while ($left <= $right) {
-      $mid = $left + floor(($right - $left) / 2);
-      $location = get_target_location($mid, $maps);
-      $min_location = min($min_location, $location);
-
-      if ($location < $mid) {
-        $right = $mid - 1;
-      } else {
-        $left = $mid + 1;
-      }
-    }
-
-    return $min_location;
   }
 
   function get_target_location($seed, &$maps) {

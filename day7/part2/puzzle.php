@@ -33,6 +33,18 @@
 
       $this->has_a_joker = array_key_exists("J", $uniques);
 
+      if($this->has_a_joker) {
+        $most_frequent_card = array_search(max($uniques), $uniques);
+        $jokers = $uniques["J"];
+
+        for($i=0; $i < $jokers; $i++) {
+          $uniques[$most_frequent_card]++;
+          $uniques["J"]--;
+        }
+
+        unset($uniques["J"]);
+      }
+
       $vals = array_values($uniques);
       rsort($vals);
 

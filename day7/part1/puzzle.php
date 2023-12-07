@@ -1,6 +1,5 @@
 <?php
-  $inputs = array("example.txt");
-  // $inputs = array("example.txt", "input.txt");
+  $inputs = array("example.txt", "input.txt");
 
   const CARDS = array("2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A");
 
@@ -19,15 +18,16 @@
     public $power, $combination;
 
     function __construct($cards, $bid) {
-      $this->cards = $cards;
+      preg_match_all('/(\d|\D)/', $cards, $matches);
+      $this->cards = $matches[0];
+
       $this->bid = $bid;
       $this->set_combination();
       $this->power = POWER[$this->combination];
     }
 
     function set_combination() {
-      preg_match_all('/(\d|\D)/', $this->cards, $matches);
-      $uniques = array_count_values($matches[0]);
+      $uniques = array_count_values($this->cards);
 
       $vals = array_values($uniques);
       rsort($vals);
@@ -62,14 +62,26 @@
 
     usort($hands, "compare_hands");
 
-    print_r($hands);
+    $result = 0;
 
-    $result = null;
+    foreach($hands as $rank => $hand) {
+      $result += $hand->bid * ($rank + 1);
+    }
 
     echo $input . ": " . $result . "\n";
   }
 
   function compare_hands($hand_1, $hand_2) {
+    if($hand_1->power === $hand_2->power) {
+      foreach(range(0, 4) as $num) {
+        if($hand_1->cards[$num] === $hand_2->cards[$num]) {
+          continue;
+        }
+
+        return array_search($hand_1->cards[$num], CARDS) <=> array_search($hand_2->cards[$num], CARDS);
+      }
+    }
+
     return $hand_1->power <=> $hand_2->power;
   }
 ?>

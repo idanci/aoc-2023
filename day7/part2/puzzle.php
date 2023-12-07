@@ -1,7 +1,8 @@
 <?php
-  $inputs = array("example.txt", "input.txt");
+  $inputs = array("example.txt");
+  // $inputs = array("example.txt", "input.txt");
 
-  const CARDS = array("2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A");
+  const CARDS = array("J", "2", "3", "4", "5", "6", "7", "8", "9", "T", "Q", "K", "A");
 
   const POWER = array(
     "kicker" => 1,
@@ -16,6 +17,7 @@
   class Hand {
     public $cards, $bid;
     public $power, $combination;
+    public $has_a_joker;
 
     function __construct($cards, $bid) {
       preg_match_all('/(\d|\D)/', $cards, $matches);
@@ -28,6 +30,8 @@
 
     function set_combination() {
       $uniques = array_count_values($this->cards);
+
+      $this->has_a_joker = array_key_exists("J", $uniques);
 
       $vals = array_values($uniques);
       rsort($vals);
@@ -68,6 +72,8 @@
       $result += $hand->bid * ($rank + 1);
     }
 
+    print_r($hands);
+    echo "should be 5905 \n";
     echo $input . ": " . $result . "\n";
   }
 

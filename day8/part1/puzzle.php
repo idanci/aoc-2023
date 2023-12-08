@@ -1,6 +1,8 @@
 <?php
   // $inputs = array("example.txt");
-  $inputs = array("example.txt", "input.txt");
+  // $inputs = array("example2.txt");
+  $inputs = array("input.txt");
+  // $inputs = array("example.txt", "input.txt");
 
   class Node {
     public $value, $left, $right;
@@ -15,13 +17,14 @@
   class Graph {
     public $path, $nodes;
     public $current_step, $current_node;
-    private $qwe;
+    private $path_len;
 
     function __construct($path) {
       $this->path = $path;
       $this->current_step = 0;
       $this->current_node = null;
-      $this->qwe = 0;
+      $this->nodes = array();
+      $this->path_len = strlen($path);
     }
 
     function add_node($node) {
@@ -40,18 +43,10 @@
       } else {
         $this->current_node = $this->nodes[$this->current_node->right];
       }
-
-      $this->qwe++;
-
-      if($this->qwe > 1000) {
-        // print_r($this);
-        return;
-      }
     }
 
     function get_direction() {
-      $path_length = strlen($this->path);
-      $direction = $this->path[$this->current_step % $path_length];
+      $direction = $this->path[$this->current_step % $this->path_len];
 
       $this->current_step++;
 
@@ -76,7 +71,7 @@
       $graph->walk();
     }
 
-    $result = $graph->current_step + 1;
+    $result = $graph->current_step;
 
     echo $input . ": " . $result . "\n";
   }

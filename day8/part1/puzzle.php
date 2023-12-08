@@ -1,8 +1,5 @@
 <?php
-  // $inputs = array("example.txt");
-  // $inputs = array("example2.txt");
-  $inputs = array("input.txt");
-  // $inputs = array("example.txt", "input.txt");
+  $inputs = array("example.txt", "input.txt");
 
   class Node {
     public $value, $left, $right;
@@ -17,18 +14,16 @@
   class Graph {
     public $path, $nodes;
     public $current_step, $current_node;
-    private $path_len;
 
     function __construct($path) {
       $this->path = $path;
       $this->current_step = 0;
       $this->current_node = null;
       $this->nodes = array();
-      $this->path_len = strlen($path);
     }
 
     function add_node($node) {
-      if($this->current_node === null) {
+      if($node->value === 'AAA') {
         $this->current_node = $node;
       }
 
@@ -46,7 +41,7 @@
     }
 
     function get_direction() {
-      $direction = $this->path[$this->current_step % $this->path_len];
+      $direction = $this->path[$this->current_step % strlen($this->path)];
 
       $this->current_step++;
 

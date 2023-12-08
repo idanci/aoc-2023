@@ -1,7 +1,5 @@
 <?php
-  $inputs = array("input.txt");
-  // $inputs = array("example.txt");
-  // $inputs = array("example.txt", "input.txt");
+  $inputs = array("example.txt", "input.txt");
 
   class Node {
     public $value, $left, $right;
@@ -14,12 +12,15 @@
   }
 
   class Graph {
-    public $path;
-    public $current_step = 0, $nodes = array();
+    public $path, $nodes;
+    public $current_step, $current_node;
     public $starting_nodes = array();
 
     function __construct($path) {
       $this->path = $path;
+      $this->current_step = 0;
+      $this->current_node = null;
+      $this->nodes = array();
     }
 
     function add_node($node) {
@@ -33,13 +34,16 @@
     function walk() {
       $direction = $this->get_direction();
 
-      foreach($this->starting_nodes as $index => $node) {
-        if($direction === "L") {
-          $this->starting_nodes[$index] = $this->nodes[$node->left];
-        } else {
-          $this->starting_nodes[$index] = $this->nodes[$node->right];
-        }
+      if($direction === "L") {
+        $this->current_node = $this->nodes[$this->current_node->left];
+      } else {
+        $this->current_node = $this->nodes[$this->current_node->right];
       }
+    }
+
+    function reset($starting_node) {
+      $this->current_step = 0;
+      $this->current_node = $starting_node;
     }
 
     function get_direction() {
@@ -63,25 +67,38 @@
       $graph->add_node($node);
     }
 
-    while(!reached_end($graph)) {
-      $graph->walk();
+    $result = array();
+
+    foreach($graph->starting_nodes as $starting_node) {
+      $graph->reset($starting_node);
+
+      while($graph->current_node->value[2] !== 'Z') {
+        $graph->walk();
+      }
+
+      $result[$graph->current_node->value] = $graph->current_step;
     }
 
-    $result = $graph->current_step;
+    $result = least_common_multiple(array_values($result));
 
     echo $input . ": " . $result . "\n";
   }
 
-  function reached_end($graph) {
-    $finished_nodes = 0;
-    $total_nodes = count($graph->starting_nodes);
+  // snatched from stackoverflow
+  function greatest_common_divisor($a, $b){
+    if ($b == 0)
+      return $a;
 
-    foreach($graph->starting_nodes as $node) {
-      if ($node->value[2] === 'Z') {
-        $finished_nodes++;
-      }
-    }
+    return greatest_common_divisor($b, $a % $b);
+  }
 
-    return $finished_nodes === $total_nodes;
+  function least_common_multiple($array) {
+    $n = count($array);
+    $result = $array[0];
+
+    for ($i = 1; $i < $n; $i++)
+      $result = ((($array[$i] * $result)) / (greatest_common_divisor($array[$i], $result)));
+
+    return $result;
   }
 ?>

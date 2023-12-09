@@ -1,17 +1,32 @@
 <?php
-  $inputs = array("example.txt");
-  // $inputs = array("example.txt", "input.txt");
+  $inputs = array("example.txt", "input.txt");
 
   class History {
-    public $initial_sequence;
     public $rows = array();
-    public $generation_complete = false;
-    private $current_row;
+    private $current_row, $generation_complete = false;
 
     function __construct($values) {
-      $this->initial_sequence = $values;
       $this->current_row = $values;
       $this->rows[] = $values;
+    }
+
+    function generate_data() {
+      $this->generate_rows();
+
+      $total_rows = count($this->rows);
+
+      for($i = $total_rows - 2; $i >= 0; $i--) {
+        $last_value_in_current = $this->rows[$i][count($this->rows[$i]) - 1];
+        $last_value_in_previous = $this->rows[$i + 1][count($this->rows[$i + 1]) - 1];
+
+        $this->rows[$i][] = $last_value_in_current + $last_value_in_previous;
+      }
+    }
+
+    function get_last_value() {
+      $this->generate_data();
+
+      return end($this->rows[0]);
     }
 
     function generate_rows() {
@@ -19,6 +34,8 @@
         $this->generation_complete = true;
         $this->generate_next_row();
       }
+
+      $this->rows[count($this->rows) - 1][] = 0;
     }
 
     function generate_next_row() {
@@ -26,10 +43,6 @@
       $numbers_to_generate = count($this->current_row) - 1;
 
       for($i = 0; $i < $numbers_to_generate; $i++) {
-        // if(!array_key_exists($i + 1, $this->current_row)) {
-        //   break;
-        // }
-
         $next_row_val = $this->current_row[$i + 1] - $this->current_row[$i];
 
         if($next_row_val !== 0) {
@@ -50,22 +63,16 @@
 
     foreach($lines as $line) {
       $result += process_sequence($line);
-      return;
     }
 
     echo $input . ": " . $result . "\n";
   }
 
   function process_sequence($line) {
-    $result = 0;
     $nums = array_map('intval', explode(" ", $line));
 
     $history = new History($nums);
 
-    $history->generate_rows();
-
-    print_r($history->rows);
-
-    return $result;
+    return $history->get_last_value();
   }
 ?>

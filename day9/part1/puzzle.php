@@ -23,12 +23,12 @@
 
     function generate_next_row() {
       $next_row = array();
-      $numbers_to_extrapolate = count($this->current_row) - 1;
+      $numbers_to_generate = count($this->current_row) - 1;
 
-      for($i = 0; $i < $numbers_to_extrapolate; $i++) {
-        if(!array_key_exists($i + 1, $this->current_row)) {
-          break;
-        }
+      for($i = 0; $i < $numbers_to_generate; $i++) {
+        // if(!array_key_exists($i + 1, $this->current_row)) {
+        //   break;
+        // }
 
         $next_row_val = $this->current_row[$i + 1] - $this->current_row[$i];
 

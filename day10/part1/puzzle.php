@@ -55,13 +55,6 @@
       if($next_pipe_coords === null) {
         break;
       }
-
-      $row = $next_pipe_coords[0];
-      $column = $next_pipe_coords[1];
-
-      if($next_pipe_coords === null || $map[$row][$column] === "S") {
-        break;
-      }
     }
 
     return $path;

@@ -1,6 +1,5 @@
 <?php
-  // $inputs = array("example.txt", "input.txt");
-  $inputs = array("example.txt");
+  $inputs = array("example.txt", "input.txt");
 
   // const CONNECTIONS = array(
   //   "|" => array("N", "S"),
@@ -29,9 +28,7 @@
 
     $path = walk($start_position, $map);
 
-    print_r($path);
-    return;
-    $result = 0;
+    $result = count($path) / 2;
 
     echo $input . ": " . $result . "\n";
   }

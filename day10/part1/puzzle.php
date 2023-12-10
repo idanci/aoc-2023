@@ -1,14 +1,12 @@
 <?php
   $inputs = array("example.txt", "input.txt");
 
-  // const CONNECTIONS = array(
-  //   "|" => array("N", "S"),
-  //   "-" => array("E", "W"),
-  //   "L" => array("N", "E"),
-  //   "J" => array("N", "W"),
-  //   "7" => array("S", "W"),
-  //   "F" => array("S", "E")
-  // );
+  const CONNECTIONS = array(
+    "NORTH" => ['|', 'L', 'J'],
+    "SOUTH" => ['|', '7', 'F'],
+    "WEST" => ['-', 'J', '7'],
+    "EAST" => ['-', 'L', 'F']
+  );
 
   function get_start_coordinates(&$map) {
     foreach($map as $row_index => $row) {
@@ -71,22 +69,22 @@
 
   function step_two_tile_coordinates($current_row, $current_column, &$map) {
     $symbol = $map[$current_row - 1][$current_column];
-    if(in_array($symbol, ['|', '7', 'F'])) {
+    if(in_array($symbol, CONNECTIONS['SOUTH'])) {
       return [$current_row - 1, $current_column];
     }
 
     $symbol = $map[$current_row + 1][$current_column];
-    if(in_array($symbol, ['|', 'L', 'J'])) {
+    if(in_array($symbol, CONNECTIONS['NORTH'])) {
       return [$current_row + 1, $current_column];
     }
 
     $symbol = $map[$current_row][$current_column - 1];
-    if(in_array($symbol, ['-', 'L', 'F'])) {
+    if(in_array($symbol, CONNECTIONS['EAST'])) {
       return [$current_row, $current_column - 1];
     }
 
     $symbol = $map[$current_row][$current_column + 1];
-    if(in_array($symbol, ['-', 'J', '7'])) {
+    if(in_array($symbol, CONNECTIONS['WEST'])) {
       return [$current_row, $current_column + 1];
     }
   }
@@ -94,7 +92,7 @@
   function north_tile_coordinates($current_row, $current_column, &$map) {
     $symbol = $map[$current_row][$current_column];
 
-    if(in_array($symbol, ['|', 'L', 'J'])) {
+    if(in_array($symbol, CONNECTIONS['NORTH'])) {
       return [$current_row - 1, $current_column];
     }
   }
@@ -102,7 +100,7 @@
   function south_tile_coordinates($current_row, $current_column, &$map) {
     $symbol = $map[$current_row][$current_column];
 
-    if(in_array($symbol, ['|', '7', 'F'])) {
+    if(in_array($symbol, CONNECTIONS['SOUTH'])) {
       return [$current_row + 1, $current_column];
     }
   }
@@ -110,7 +108,7 @@
   function west_tile_coordinates($current_row, $current_column, &$map) {
     $symbol = $map[$current_row][$current_column];
 
-    if(in_array($symbol, ['-', 'J', '7'])) {
+    if(in_array($symbol, CONNECTIONS['WEST'])) {
       return [$current_row, $current_column - 1];
     }
   }
@@ -118,7 +116,7 @@
   function east_tile_coordinates($current_row, $current_column, &$map) {
     $symbol = $map[$current_row][$current_column];
 
-    if(in_array($symbol, ['-', 'L', 'F'])) {
+    if(in_array($symbol, CONNECTIONS['EAST'])) {
       return [$current_row, $current_column + 1];
     }
   }

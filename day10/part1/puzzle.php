@@ -11,8 +11,7 @@
   function get_start_coordinates(&$map) {
     foreach($map as $row_index => $row) {
       foreach($row as $column_index => $symbol) {
-        if($symbol === "S")
-          return array($row_index, $column_index);
+        if($symbol === "S") return array($row_index, $column_index);
       }
     }
   }
@@ -30,23 +29,11 @@
     echo $input . ": " . $result . "\n";
   }
 
-  function path_complete(&$path, &$map) {
-    $last_pipe = end($path);
-
-    if($last_pipe === null) return false;
-
-    $row = $last_pipe[0];
-    $column = $last_pipe[1];
-    $symbol = $map[$row][$column];
-
-    $symbol === "S";
-  }
-
   function walk($current_pipe_coordinates, &$map) {
     $path = array();
     $path[] = $current_pipe_coordinates;
 
-    while(!path_complete($path, $map)) {
+    while(true) {
       $next_pipe_coords = next_pipe_coordinates($path, $map);
 
       if($next_pipe_coords === null) break;

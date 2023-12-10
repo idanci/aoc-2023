@@ -2,10 +2,10 @@
   $inputs = array("example.txt", "input.txt");
 
   const CONNECTIONS = array(
-    "N" => ['|', 'L', 'J'],
-    "S" => ['|', '7', 'F'],
-    "W" => ['-', 'J', '7'],
-    "E" => ['-', 'L', 'F']
+    "N" => array('symbols' => ['|', 'L', 'J'], 'offset' => [-1, 0]),
+    "S" => array('symbols' => ['|', '7', 'F'], 'offset' => [1, 0]),
+    "W" => array('symbols' => ['-', 'J', '7'], 'offset' => [0, -1]),
+    "E" => array('symbols' => ['-', 'L', 'F'], 'offset' => [0, 1])
   );
 
   foreach($inputs as $input) {
@@ -29,7 +29,7 @@
     $path[] = $step_two_coords;
 
     do {
-      $next_pipe_coords = next_pipe_coordinates($path, $map);
+      $next_pipe_coords = next_tile_coordinates($path, $map);
     } while($next_pipe_coords !== null);
 
     return $path;
@@ -44,61 +44,38 @@
   }
 
   function second_tile_coordinates($current_row, $current_column, &$map) {
-    $symbol = $map[$current_row - 1][$current_column];
-    if(in_array($symbol, CONNECTIONS['S'])) return [$current_row - 1, $current_column];
-
     $symbol = $map[$current_row + 1][$current_column];
-    if(in_array($symbol, CONNECTIONS['N'])) return [$current_row + 1, $current_column];
-
-    $symbol = $map[$current_row][$current_column - 1];
-    if(in_array($symbol, CONNECTIONS['E'])) return [$current_row, $current_column - 1];
+    if(in_array($symbol, CONNECTIONS['N']['symbols'])) return [$current_row + 1, $current_column];
 
     $symbol = $map[$current_row][$current_column + 1];
-    if(in_array($symbol, CONNECTIONS['W'])) return [$current_row, $current_column + 1];
+    if(in_array($symbol, CONNECTIONS['W']['symbols'])) return [$current_row, $current_column + 1];
+
+    $symbol = $map[$current_row - 1][$current_column];
+    if(in_array($symbol, CONNECTIONS['S']['symbols'])) return [$current_row - 1, $current_column];
+
+    $symbol = $map[$current_row][$current_column - 1];
+    if(in_array($symbol, CONNECTIONS['E']['symbols'])) return [$current_row, $current_column - 1];
   }
 
-  function north_tile_coordinates($symbol, $current_row, $current_column, &$map) {
-    if(in_array($symbol, CONNECTIONS['N'])) return [$current_row - 1, $current_column];
-  }
+  function next_tile_coordinates(&$path, &$map) {
+    $current_tile_coordinates = end($path);
 
-  function south_tile_coordinates($symbol, $current_row, $current_column, &$map) {
-    if(in_array($symbol, CONNECTIONS['S'])) return [$current_row + 1, $current_column];
-  }
-
-  function west_tile_coordinates($symbol, $current_row, $current_column, &$map) {
-    if(in_array($symbol, CONNECTIONS['W'])) return [$current_row, $current_column - 1];
-  }
-
-  function east_tile_coordinates($symbol, $current_row, $current_column, &$map) {
-    if(in_array($symbol, CONNECTIONS['E'])) return [$current_row, $current_column + 1];
-  }
-
-  function next_pipe_coordinates(&$path, &$map) {
-    $current_pipe_coordinates = end($path);
-
-    $row = $current_pipe_coordinates[0];
-    $column = $current_pipe_coordinates[1];
+    $row = $current_tile_coordinates[0];
+    $column = $current_tile_coordinates[1];
     $symbol = $map[$row][$column];
 
-    $north_coords = north_tile_coordinates($symbol, $row, $column, $map);
-    if(valid_path($north_coords, $path)) return $north_coords;
-
-    $south_coords = south_tile_coordinates($symbol, $row, $column, $map);
-    if(valid_path($south_coords, $path)) return $south_coords;
-
-    $west_coords = west_tile_coordinates($symbol, $row, $column, $map);
-    if(valid_path($west_coords, $path)) return $west_coords;
-
-    $east_coords = east_tile_coordinates($symbol, $row, $column, $map);
-    if(valid_path($east_coords, $path)) return $east_coords;
+    return move($symbol, $row, $column, $path);
   }
 
-  function valid_path($coords, &$path) {
-    if($coords === null) return false;
-
-    if(!in_array($coords, $path)) {
-      $path[] = $coords;
-      return true;
+  function move($symbol, $current_row, $current_column, &$path) {
+    foreach(CONNECTIONS as $direction => $metadata) {
+      if(in_array($symbol, $metadata['symbols'])) {
+        $coords = [$current_row + $metadata['offset'][0], $current_column + $metadata['offset'][1]];
+        if(!in_array($coords, $path)) {
+          $path[] = $coords;
+          return $coords;
+        }
+      }
     }
   }
 ?>

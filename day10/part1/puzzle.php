@@ -70,40 +70,24 @@
   }
 
   function step_two_tile_coordinates($current_row, $current_column, &$map) {
-    if(array_key_exists($current_row - 1, $map)) {
-      if(array_key_exists($current_column, $map[$current_row - 1])) {
-        $symbol = $map[$current_row - 1][$current_column];
-        if(in_array($symbol, ['|', '7', 'F'])) {
-          return [$current_row - 1, $current_column];
-        }
-      }
+    $symbol = $map[$current_row - 1][$current_column];
+    if(in_array($symbol, ['|', '7', 'F'])) {
+      return [$current_row - 1, $current_column];
     }
 
-    if(array_key_exists($current_row + 1, $map)) {
-      if(array_key_exists($current_column, $map[$current_row + 1])) {
-        $symbol = $map[$current_row + 1][$current_column];
-        if(in_array($symbol, ['|', 'L', 'J'])) {
-          return [$current_row + 1, $current_column];
-        }
-      }
+    $symbol = $map[$current_row + 1][$current_column];
+    if(in_array($symbol, ['|', 'L', 'J'])) {
+      return [$current_row + 1, $current_column];
     }
 
-    if(array_key_exists($current_row, $map)) {
-      if(array_key_exists($current_column - 1, $map[$current_row])) {
-        $symbol = $map[$current_row][$current_column - 1];
-        if(in_array($symbol, ['-', 'L', 'F'])) {
-          return [$current_row, $current_column - 1];
-        }
-      }
+    $symbol = $map[$current_row][$current_column - 1];
+    if(in_array($symbol, ['-', 'L', 'F'])) {
+      return [$current_row, $current_column - 1];
     }
 
-    if(array_key_exists($current_row, $map)) {
-      if(array_key_exists($current_column + 1, $map[$current_row])) {
-        $symbol = $map[$current_row][$current_column + 1];
-        if(in_array($symbol, ['-', 'J', '7'])) {
-          return [$current_row, $current_column + 1];
-        }
-      }
+    $symbol = $map[$current_row][$current_column + 1];
+    if(in_array($symbol, ['-', 'J', '7'])) {
+      return [$current_row, $current_column + 1];
     }
   }
 
@@ -113,8 +97,6 @@
     if(in_array($symbol, ['|', 'L', 'J'])) {
       return [$current_row - 1, $current_column];
     }
-
-    return null;
   }
 
   function south_tile_coordinates($current_row, $current_column, &$map) {
@@ -123,8 +105,6 @@
     if(in_array($symbol, ['|', '7', 'F'])) {
       return [$current_row + 1, $current_column];
     }
-
-    return null;
   }
 
   function west_tile_coordinates($current_row, $current_column, &$map) {
@@ -133,8 +113,6 @@
     if(in_array($symbol, ['-', 'J', '7'])) {
       return [$current_row, $current_column - 1];
     }
-
-    return null;
   }
 
   function east_tile_coordinates($current_row, $current_column, &$map) {
@@ -143,8 +121,6 @@
     if(in_array($symbol, ['-', 'L', 'F'])) {
       return [$current_row, $current_column + 1];
     }
-
-    return null;
   }
 
   function next_pipe_coordinates(&$path, &$map) {
